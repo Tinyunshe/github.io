@@ -1,0 +1,194 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>当kubernetesCLI和docker遇上JenkinsPipeline | Tinyunshe's Blog</title><meta name="description" content="戳这里查看文件的repo，点个星星再关注，共同成长不迷路 部署为了直观的快速入门和分享问题，我把Deployment解构成docker run，基本一致 这是Deployment YAML部署链接 $ cat &gt; jenkins_docker_run &lt;&lt; EOF IMAGE&#x3D;jenkinsci&#x2F;blueocean DIR&#x3D;&#x2F;data&#x2F;server&#x2F;jenkins  docker"><meta name="keywords" content="DevOps,Kubernetes,Docker,Jenkins,Pipeline"><meta name="author" content="Tinyunshe,441811842@qq.com"><meta name="copyright" content="Tinyunshe"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="http://tinyunshe.github.io/2020/08/09/kube-CLI_docker/"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta property="og:type" content="article"><meta property="og:title" content="当kubernetesCLI和docker遇上JenkinsPipeline"><meta property="og:url" content="http://tinyunshe.github.io/2020/08/09/kube-CLI_docker/"><meta property="og:site_name" content="Tinyunshe's Blog"><meta property="og:description" content="戳这里查看文件的repo，点个星星再关注，共同成长不迷路 部署为了直观的快速入门和分享问题，我把Deployment解构成docker run，基本一致 这是Deployment YAML部署链接 $ cat &gt; jenkins_docker_run &lt;&lt; EOF IMAGE&#x3D;jenkinsci&#x2F;blueocean DIR&#x3D;&#x2F;data&#x2F;server&#x2F;jenkins  docker"><meta property="og:image" content="http://tinyunshe.github.io/img/fire.png"><meta property="article:published_time" content="2020-08-09T10:00:00.000Z"><meta property="article:modified_time" content="2020-08-09T10:58:30.261Z"><meta name="twitter:card" content="summary"><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fff')
+  }
+}
+
+var getCookies = function (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
+var autoChangeMode = 'false'
+var t = getCookies('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (Cookies.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="next" title="Hello World" href="http://tinyunshe.github.io/2020/07/23/hello-world/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: false,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  highlightCopy: true,
+  highlightLang: true,
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false    
+}</script><script>var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true
+  }</script><noscript><style>
+#nav {
+  opacity: 1
+}
+.justified-gallery img{
+  opacity: 1
+}
+</style></noscript><meta name="generator" content="Hexo 4.2.1"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/wcp.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">3</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">8</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">1</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时光机</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#部署"><span class="toc-number">1.</span> <span class="toc-text">部署</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Docker"><span class="toc-number">2.</span> <span class="toc-text">Docker</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的问题"><span class="toc-number">2.1.</span> <span class="toc-text">遇到的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Jenkins容器内docker命令没有执行权限"><span class="toc-number">2.1.1.</span> <span class="toc-text">1. Jenkins容器内docker命令没有执行权限</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#原因："><span class="toc-number">2.1.1.1.</span> <span class="toc-text">原因：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解决："><span class="toc-number">2.1.1.2.</span> <span class="toc-text">解决：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-使用环境变量赋值Registry的凭证ID不起作用且变量和凭证都创建，却显示未找到"><span class="toc-number">2.1.2.</span> <span class="toc-text">2. 使用环境变量赋值Registry的凭证ID不起作用且变量和凭证都创建，却显示未找到</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#原因：-1"><span class="toc-number">2.1.2.1.</span> <span class="toc-text">原因：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解决：-1"><span class="toc-number">2.1.2.2.</span> <span class="toc-text">解决：</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Kubernetes-CLI"><span class="toc-number">3.</span> <span class="toc-text">Kubernetes CLI</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#遇到的问题-1"><span class="toc-number">3.1.</span> <span class="toc-text">遇到的问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Jenkins容器内kubectl命令不存在"><span class="toc-number">3.1.1.</span> <span class="toc-text">1. Jenkins容器内kubectl命令不存在</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#原因：-2"><span class="toc-number">3.1.1.1.</span> <span class="toc-text">原因：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解决：-2"><span class="toc-number">3.1.1.2.</span> <span class="toc-text">解决：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-没有提供kubectl的kubeconfig配置文件"><span class="toc-number">3.1.2.</span> <span class="toc-text">2. 没有提供kubectl的kubeconfig配置文件</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#原因：-3"><span class="toc-number">3.1.2.1.</span> <span class="toc-text">原因：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解决：-3"><span class="toc-number">3.1.2.2.</span> <span class="toc-text">解决：</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用Jenkinsfile"><span class="toc-number">4.</span> <span class="toc-text">使用Jenkinsfile</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#不同项目程序Jenkinsfile的配置"><span class="toc-number">4.1.</span> <span class="toc-text">不同项目程序Jenkinsfile的配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用注意事项"><span class="toc-number">4.2.</span> <span class="toc-text">使用注意事项</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#心路历程"><span class="toc-number">5.</span> <span class="toc-text">心路历程</span></a></li></ol></div></div></div><div id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/kube-CLI_docker.png)"><nav id="nav"><span class="pull-left" id="blog_name"><a class="blog_title" id="site-name" href="/">Tinyunshe's Blog</a></span><span class="pull-right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时光机</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">当kubernetesCLI和docker遇上JenkinsPipeline</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date"><span class="post-meta__date-created" title="发表于 2020-08-09 18:00:00"><i class="far fa-calendar-alt fa-fw"></i> 发表于 2020-08-09</span><span class="post-meta__separator">|</span><span class="post-meta__date-updated" title="更新于 2020-08-09 18:58:30"><i class="fas fa-history fa-fw"></i> 更新于 2020-08-09</span></time><span class="post-meta__categories"><span class="post-meta__separator">|</span><i class="fas fa-inbox fa-fw post-meta__icon"></i><a class="post-meta__categories" href="/categories/Kubernetes%E7%94%9F%E6%80%81%E5%9C%88/">Kubernetes生态圈</a></span></div><div class="meta-secondline"> </div><div class="meta-thirdline"><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta__icon"></i><span>阅读量:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p><a href="https://github.com/Tinyunshe/Jenkins-workflow/tree/master/k8s%2Bdocker%2Bgradle%2Bshell_bash" target="_blank" rel="noopener">戳这里查看文件的repo，点个星星再关注，共同成长不迷路</a></p>
+<h1 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h1><p>为了直观的快速入门和分享问题，我把Deployment解构成docker run，基本一致</p>
+<p><a href="https://github.com/Tinyunshe/Jenkins-workflow/blob/master/simpleJenkins-deployment.yaml" target="_blank" rel="noopener">这是Deployment YAML部署链接</a></p>
+<pre><code>$ cat &gt; jenkins_docker_run &lt;&lt; EOF
+IMAGE=jenkinsci/blueocean
+DIR=/data/server/jenkins
+
+docker run -d -m 1g --name jenkins --restart unless-stopped -p 8282:8080 -p 50000:50000 \
+--group-add=$(stat -c %g /var/run/docker.sock) \
+-v ${DIR}/docker_volume:/var/jenkins_home \
+-v ${DIR}/jenkins_dockersite:/jenkins_dockersite \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v /etc/localtime:/etc/localtime \
+-e JAVA_OPTS=-Duser.timezone=Asia/Shanghai \
+${IMAGE} 
+EOF</code></pre><p><strong>Ports</strong>：反代在了外部nginx，所以开了8282。需要注意的是要增大buffers的大小不然后会出现一些页面无法显示全的问题。如果使用Kubernetes，请考虑ingress</p>
+<pre><code>proxy_buffer_size       128k;
+proxy_buffers        32 128k;
+proxy_busy_buffers_size 128k;</code></pre><p><strong>Volumes</strong>：${DIR}/docker_volume，Jenkins的workspace需要挂载到宿主机，这是无用质疑的，也是官方的建议配置;/var/run/docker.sock，如果要在容器内部通过unix socket套接字操作docker的话需要挂载，这里有坑，我在底下有说；/etc/localtime，修改容器内时间；${DIR}/jenkins_dockersite，在使用容器内jenkins的时候，免不了遇到扩展问题，外部工具的使用，资源共享等，总不能全都放在workspace中，这个目录也是下面实现CD的工作目录</p>
+<p><strong>Env</strong>：永久性更改jenkins时区问题的方式，除非你不在东八区使用jenkins，还可以习惯上午开始构建却显示下午构建成功的诡异时间问题，而且内部的时间戳也根据jenkins时区算的，我安装过Build Timestamp plugin更改了配置为HongKong，输出依然是GMT时区，绝望</p>
+<h1 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h1><p>参考：<a href="https://docs.cloudbees.com/docs/admin-resources/latest/plugins/docker-workflow" target="_blank" rel="noopener">Docker-workflow Pipeline官方文档</a></p>
+<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><h3 id="1-Jenkins容器内docker命令没有执行权限"><a href="#1-Jenkins容器内docker命令没有执行权限" class="headerlink" title="1. Jenkins容器内docker命令没有执行权限"></a>1. Jenkins容器内docker命令没有执行权限</h3><pre><code>...
+[Pipeline] sh
++ docker info
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.39/info: dial unix /var/run/docker.sock: connect: permission denied
+...</code></pre><h4 id="原因："><a href="#原因：" class="headerlink" title="原因："></a>原因：</h4><p>如果使用中文官方文档启动方式的话，是不会为容器默认用户jenkins添加任何附属组的，而中文官方推荐用户使用docker的方式是挂载sock文件到内部，却没有告知sock文件的权限问题</p>
+<p>有趣的是而英文官方文档启动方式有提到使用docker的权限问题，解决方式是tls文件挂载到内部，并没有测试过，安全敏感度还没那么高，但我想吐槽一下，中英文文档不一样，你们敢信？</p>
+<pre><code>$ docker exec jenkins groups  
+jenkins
+$ docker exec jenkins ls -l /var/run/docker.sock
+srw-rw---- 1 root 994 0 Aug  4 18:19 /var/run/docker.sock</code></pre><p><a href="https://www.jenkins.io/zh/doc/book/installing/" target="_blank" rel="noopener">中文官方文档启动方式</a></p>
+<p><a href="https://www.jenkins.io/doc/book/installing/" target="_blank" rel="noopener">英文官方文档启动方式</a></p>
+<h4 id="解决："><a href="#解决：" class="headerlink" title="解决："></a>解决：</h4><p>为容器默认用户jenkins添加附属组，启动容器</p>
+<pre><code>$ docker run ... --group-add=$(stat -c %g /var/run/docker.sock) ... ${IMAGE}
+$ docker exec jenkins groups
+jenkins 994
+$ docker info
+Containers: 11
+Running: 11
+...</code></pre><p>还有一种方式是以client角色访问，增加Docker daemon启动参数 <code>-H tcp://${IP_ADDR}:2376</code> ，重启dockerd之后在pipeline中连接至docker server,语法 <code>docker.withServer(&#39;tcp：//${IP_ADDR}:2376&#39;)</code></p>
+<h3 id="2-使用环境变量赋值Registry的凭证ID不起作用且变量和凭证都创建，却显示未找到"><a href="#2-使用环境变量赋值Registry的凭证ID不起作用且变量和凭证都创建，却显示未找到" class="headerlink" title="2. 使用环境变量赋值Registry的凭证ID不起作用且变量和凭证都创建，却显示未找到"></a>2. 使用环境变量赋值Registry的凭证ID不起作用且变量和凭证都创建，却显示未找到</h3><pre><code>...
+[Pipeline] End of Pipeline
+ERROR: Could not find credentials matching ${DOCKER_CRE_ID}
+Finished: FAILURE</code></pre><h4 id="原因：-1"><a href="#原因：-1" class="headerlink" title="原因："></a>原因：</h4><p>Jenkinsfile是这么写的 <code>docker.withRegistry(&#39;${DOCKER_REGISTRY}&#39;, &#39;${DOCKER_CRE_ID&#39;)</code></p>
+<p>Groovy语法问题，单引号和双引号在支持表达式中是有区别的，说白了双引号的strings它是支持变量的，就像Shell bash里的echo，单引号不输出变量双引号输出</p>
+<p><a href="http://docs.groovy-lang.org/latest/html/documentation/index.html#_double_quoted_string" target="_blank" rel="noopener">Groovy关于双引号的官方文档</a></p>
+<p>Docker pipeline官方示例是单引号，当时就照搬了 <code>docker.withRegistry(&#39;https://docker.mycorp.com/&#39;, &#39;docker-login&#39;)</code></p>
+<h4 id="解决：-1"><a href="#解决：-1" class="headerlink" title="解决："></a>解决：</h4><p>双引号支持变量</p>
+<p><code>docker.withRegistry(&quot;${DOCKER_REGISTRY}&quot;, &quot;${DOCKER_CRE_ID&quot;)</code></p>
+<h1 id="Kubernetes-CLI"><a href="#Kubernetes-CLI" class="headerlink" title="Kubernetes CLI"></a>Kubernetes CLI</h1><p><a href="https://github.com/jenkinsci/kubernetes-cli-plugin" target="_blank" rel="noopener">Kubernetes CLI Plugin Github文档</a></p>
+<h2 id="遇到的问题-1"><a href="#遇到的问题-1" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><h3 id="1-Jenkins容器内kubectl命令不存在"><a href="#1-Jenkins容器内kubectl命令不存在" class="headerlink" title="1. Jenkins容器内kubectl命令不存在"></a>1. Jenkins容器内kubectl命令不存在</h3><pre><code>...
++ kubectl cluster-info
+/var/jenkins_home/jobs/dg.dfsjfm.com/workspace@tmp/durable-40ad0e04/script.sh: line 1: kubectl: not found
+[Pipeline] }
+...</code></pre><h4 id="原因：-2"><a href="#原因：-2" class="headerlink" title="原因："></a>原因：</h4><p>Jenkins/buleocean容器内没有提供kubectl的二进制执行文件，需要安装或者挂载kubectl二进制文件到Jenkins容器内部。Jenkins/jnlp-slave容器中有提供kubectl执行文件，而且它也是Kubernetes plugin中默认代理pod容器，如有需要此类骚操作可以采用Jenkins-slave代理pod执行流程，<a href="https://github.com/jenkinsci/kubernetes-plugin" target="_blank" rel="noopener">详情请戳</a></p>
+<h4 id="解决：-2"><a href="#解决：-2" class="headerlink" title="解决："></a>解决：</h4><p>部署方式中我选择挂载了Jenkins独立操作docker以及存放dockerfile<br>的工作目录，其中的tools目录可以放置外部的二进制工具或者脚本</p>
+<pre><code>$ docker exec jenkins ls /jenkins_dockersite/tools
+deploy_rollout.sh
+kubectl</code></pre><p>还需要在添加全局环境变量以识别$PATH Jenkins system managerment -&gt; system configuretion -&gt; Global properties -&gt; environment variable -&gt; add {key=”<font color=red>PATH+EXTRA</font>“,value=”<font color=red>/jenkins_dockersite/tools</font>“}</p>
+<h3 id="2-没有提供kubectl的kubeconfig配置文件"><a href="#2-没有提供kubectl的kubeconfig配置文件" class="headerlink" title="2. 没有提供kubectl的kubeconfig配置文件"></a>2. 没有提供kubectl的kubeconfig配置文件</h3><pre><code>...
+[Pipeline] sh
++ kubectl get cs
+error: no configuration has been provided, try setting KUBERNETES_MASTER environment variable
+...</code></pre><h4 id="原因：-3"><a href="#原因：-3" class="headerlink" title="原因："></a>原因：</h4><p>在拥有kubectl二进制工具后，执行kubectl命令是一定会需要集群kubeconfig文件的</p>
+<h4 id="解决：-3"><a href="#解决：-3" class="headerlink" title="解决："></a>解决：</h4><p>参考plugin官方文档为Jenkins创建sa</p>
+<pre><code>$ kcKube-system create sa jenkins-workflow</code></pre><p>下一步为 <code>jenkins-workflow</code> sa授予此名称空间的权限，还可以通过创建<code>ClusterRoleBinding</code>而不是<code>RoleBinding</code>使sa拥有所有名称空间的权限</p>
+<pre><code>$ kcKube-system create clusterrolebinding jenkins-workflow-clusterrolebinding --clusterrole=cluster-admin --serviceaccount=kube-system:jenkins-workflow</code></pre><p>获取sa <code>jenkins-workflow</code> 自动生成的secret名称</p>
+<pre><code>$ kcKube-system get sa jenkins-workflow -o go-template --template=&apos;{{range .secrets}}{{.name}}{{"\n"}}{{end}}&apos;
+jenkins-workflow-token-g5xjq</code></pre><p>get名称并使用base64对其进行解码</p>
+<pre><code>$ kcKube-system get secret jenkins-workflow-token-g5xjq -o go-template --template &apos;{{index .data "token"}}&apos; | base64 -d
+eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2V [too long...]</code></pre><p>在Jenkins上，导航至要在其中添加令牌的文件夹，或进入主页。然后单击左侧菜单中的“凭据”项，找到或创建所需的“域”。最后，将令牌粘贴到Secret text凭证中。该ID是credentialsId您需要在插件配置中使用的ID</p>
+<p>注意Pipeline中还需要指定apiserver的url路径，凭证只是认证信息，完整的kubeconfig是包含apiserver url的</p>
+<p><code>withKubeConfig([credentialsId: &quot;${KUBE_CRE}&quot;,serverUrl: &quot;${KUBE_APISERVER}&quot;]) {sh &#39;kubectl get po&#39;}</code> </p>
+<h1 id="使用Jenkinsfile"><a href="#使用Jenkinsfile" class="headerlink" title="使用Jenkinsfile"></a>使用Jenkinsfile</h1><h2 id="不同项目程序Jenkinsfile的配置"><a href="#不同项目程序Jenkinsfile的配置" class="headerlink" title="不同项目程序Jenkinsfile的配置"></a>不同项目程序Jenkinsfile的配置</h2><p><code>environment {CODE_NAME}</code></p>
+<p>修改Git repo名字，拉取不同repo的代码，以区分项目程序</p>
+<h2 id="使用注意事项"><a href="#使用注意事项" class="headerlink" title="使用注意事项"></a>使用注意事项</h2><p><code>environment {DOCKER_SITE}</code></p>
+<p>Jenkins操作docker构建以及上传至registry的工作目录，从宿主机本地目录挂载至jenkins容器内部，<strong>关于设置必须为绝对路径</strong></p>
+<p>manifest 目录存放kubernetes部署的yaml文件和模板yaml文件，并区分了namespace工作空间</p>
+<p>tools 目录中存放了jenkins的外部执行工具，脚本(根据系统设置全局环境变量来映射此目录)</p>
+<p>其他目录均以${JOB_NAME}命名，也就是jenkins任务名称，其中存放了Dockerfile文件，程序文件。在某些情况下代码要求整洁且不允许放置环境文件的话，可以创建此类单个项目目录来实施构建</p>
+<p>请严格按照此结构创建工作目录:</p>
+<pre><code>${DOCKER_SITE}
+    | -&gt; ${JOB_NAME_A} -&gt; Dockerfile + jar
+    | -&gt; ${JOB_NAME_B} -&gt; Dockerfile + jar
+    | -&gt; manifest -&gt; ${DEPLOY_NS_C} -&gt; ${JOB_NAME_A}.yaml.tmple + ${JOB_NAME_B}.yaml.tmple
+    |        |    -&gt; ${DEPLOY_NS_D} -&gt; ${JOB_NAME_A}.yaml.tmple + ${JOB_NAME_B}.yaml.tmple
+    | -&gt; tools -&gt; kubectl + deploy_rollout.sh</code></pre><p><code>environment {TIME_STAMP}</code></p>
+<p>GenerateTimestamp()是生成全局唯一时间戳的函数，它会返回内容并赋值给TIME_STAMP</p>
+<p><code>environment {DOCKER_IMAGE_TAG}</code></p>
+<p>发布类型_时间戳_构建ID 此变量在发布脚本中被截取出时间戳+构建ID给yaml文件使用，发布类型和时间戳之间的_下划线是必须的</p>
+<h1 id="心路历程"><a href="#心路历程" class="headerlink" title="心路历程"></a>心路历程</h1><p>现在很流行问一个问题</p>
+<p>面试官：“<em>您对DevOps有自己的理解吗？</em>”</p>
+<p>你：“<em>对于这种概念的实现方式我们通常会认为’那不就是发版代码吗？’，是，可以这说，但DevOps不单单指发版代码这么草率的去定义而已。DevOps的概念更偏向与是现代科技技术迭代的一种模式，一种技术文化，对传统开发方式，开发流程的变革。现代应用容器技术的发展和微服务架构的广泛流行，让DevOps的落地有了标准化的路径，且DevOps整合了现流行的一整套协调生态，包括云原生架构，自动化运维，测试，版本跟踪，质量保证，集成等，它期望通过消除’等待’的方式实现更敏捷，更高质量的交付</em>”</p>
+<p>DevOps，云原生、微服务、容器编排、服务网格、无服务计算等等，如果你想在一场面试中脱颖而出，这些热门手艺你必须提到。是的，没错，我底虚，我知道你也底虚。近一年发展太凶猛，使得自己喝一口凉水都会被淘汰。抱团取暖共同进步..</p>
+<p><strong>后续测试一下Kubernetes plugin的方式处理流程而非使用CLI，用helm处理模板并发布</strong></p>
+<p><strong>技术与环境的碰撞，合适才是最重要的</strong></p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:441811842@qq.com">Tinyunshe</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://tinyunshe.github.io/2020/08/09/kube-CLI_docker/">http://tinyunshe.github.io/2020/08/09/kube-CLI_docker/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://tinyunshe.github.io" target="_blank">Tinyunshe's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/DevOps/">DevOps</a><a class="post-meta__tags" href="/tags/Kubernetes/">Kubernetes</a><a class="post-meta__tags" href="/tags/Docker/">Docker</a><a class="post-meta__tags" href="/tags/Jenkins/">Jenkins</a><a class="post-meta__tags" href="/tags/Pipeline/">Pipeline</a></div><div class="post_share"><div class="social-share" data-image="/img/wcp.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2020/07/23/hello-world/"><img class="next-cover" data-src="/" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Hello World</div></div></a></div></nav></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 By Tinyunshe</div><div class="framework-info"><span>驱动 </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><button id="readmode" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font_plus" title="放大字体"><i class="fas fa-plus"></i></button><button id="font_minus" title="缩小字体"><i class="fas fa-minus"></i></button><button class="translate_chn_to_cht" id="translateLink" title="简繁转换">繁</button><button id="darkmode" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" title="设置"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js" async></script></body></html>
